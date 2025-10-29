@@ -1,0 +1,94 @@
+.select {
+  position: relative;
+  width: 100%;
+  cursor: pointer;
+  user-select: none;
+}
+
+.trigger {
+  width: 100%;
+  height: 48px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f5f7fb;
+  padding: 0 42px 0 14px;
+  font-size: 15px;
+  line-height: 48px;
+  color: #374151;
+  transition: all 0.15s ease;
+}
+
+.trigger::after {
+  content: "";
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%) rotate(0deg);
+  width: 18px;
+  height: 18px;
+  background: url("../public/down_arrow.png") no-repeat center;
+  background-size: contain;
+  transition: transform 0.2s ease;
+}
+
+.select.open .trigger {
+  background: #fff;
+  border-color: #8b77ff;
+  box-shadow: 0 0 0 4px rgba(139,119,255,.15);
+}
+
+.select.open .trigger::after {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.options {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 8px 0;
+  margin: 0;
+  list-style: none;
+  z-index: 100;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.option {
+  padding: 10px 14px;
+  color: #374151;
+  transition: background-color 0.1s;
+}
+
+.option:hover {
+  background: #f3f4f6;
+}
+
+.option.selected {
+  background: #eef0ff;
+  color: #5a4bff;
+  font-weight: 500;
+}
+
+/* 스크롤바 스타일링 */
+.options::-webkit-scrollbar {
+  width: 8px;
+}
+
+.options::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.options::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+.options::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}

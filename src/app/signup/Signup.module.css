@@ -1,0 +1,229 @@
+/* ===== 페이지 전체 ===== */
+.page {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  background: #f7f8fa; /* 살짝 밝은 회색 배경 */
+}
+
+/* ===== 카드 ===== */
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 24px;
+  padding: 24px 20px 32px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== 헤더 ===== */
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.iconBtn {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #1c1c1c;
+  cursor: pointer;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #000;
+  text-align: center;
+  margin: 0;
+}
+
+/* ===== 폼 공통 ===== */
+.form {
+  margin-top: 8px;
+}
+
+.field {
+  margin-top: 20px;
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 6px;
+}
+
+/* ===== 입력창 ===== */
+.input {
+  width: 100%;
+  height: 48px;
+  border: 1px solid #e5e7eb;
+  background: #f5f7fb;
+  border-radius: 12px;
+  padding: 0 14px;
+  font-size: 15px;
+  color: #111;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.input::placeholder {
+  color: #9aa3b2;
+}
+
+.input:focus {
+  background: #fff;
+  border-color: #8b77ff;
+  box-shadow: 0 0 0 3px rgba(139, 119, 255, 0.2);
+}
+
+/* ===== 아이디 + 중복확인 버튼 ===== */
+.row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.btnGhost {
+  background: #f0edff;
+  color: #6b5cff;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  padding: 0 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btnGhost:hover {
+  background: #e5e0ff;
+}
+
+/* ===== 라디오 그룹 (성별) ===== */
+fieldset.field {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.radios {
+  display: flex;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.radio {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  color: #1e1e1e;
+}
+
+.radio input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #7a68ff; /* 보라색 포인트 */
+}
+
+/* ===== 셀렉트 (출생년도) ===== */
+.select {
+  position: relative;
+}
+
+.select select {
+  appearance: none;
+  width: 100%;
+  height: 48px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f5f7fb;
+  font-size: 15px;
+  padding: 0 42px 0 14px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.select select:focus {
+  background: #fff;
+  border-color: #8b77ff;
+  box-shadow: 0 0 0 4px rgba(139, 119, 255, 0.15);
+}
+
+.select::after {
+  content: "";
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background: url("/down_arrow.png") no-repeat center center;
+  background-size: contain;
+  pointer-events: none;
+  transition: transform 0.2s ease;
+}
+
+.select.open::after,
+.select select:focus + &::after {
+  background: url("/up_arrow.png") no-repeat center center;
+  transform: translateY(-50%) rotate(180deg);
+  background-size: contain;
+}
+
+/* ===== 버튼 ===== */
+.actions {
+  margin-top: 28px;
+}
+
+.btnPrimary {
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 12px;
+  background: #7a68ff;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(122, 104, 255, 0.3);
+  transition: 0.25s;
+}
+
+.btnPrimary:hover {
+  filter: brightness(1.05);
+}
+
+.message {
+  text-align: center;
+  margin-top: 18px;
+  color: #6a5cff;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* ===== 반응형 (모바일 기준 최적화) ===== */
+@media (max-width: 430px) {
+  .card {
+    border-radius: 0;
+    max-width: 100%;
+    height: 100dvh;
+    padding: 28px 18px 40px;
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .btnPrimary {
+    font-size: 15px;
+  }
+}
