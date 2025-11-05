@@ -45,7 +45,7 @@
   margin: 0;
 }
 
-/* ===== 폼 공통 ===== */
+/* 폼 공통 */
 .form {
   margin-top: 8px;
 }
@@ -61,7 +61,7 @@
   margin-bottom: 6px;
 }
 
-/* ===== 입력창 ===== */
+/* 입력창  */
 .input {
   width: 100%;
   height: 48px;
@@ -107,7 +107,7 @@
   background: #e5e0ff;
 }
 
-/* ===== 라디오 그룹 (성별) ===== */
+/*라디오 그룹  */
 fieldset.field {
   border: none;
   margin: 0;
@@ -131,10 +131,9 @@ fieldset.field {
 .radio input[type="radio"] {
   width: 18px;
   height: 18px;
-  accent-color: #7a68ff; /* 보라색 포인트 */
+  accent-color: #7a68ff; 
 }
-
-/* ===== 셀렉트 (출생년도) ===== */
+/* 출생년도 */
 .select {
   position: relative;
 }
@@ -179,7 +178,7 @@ fieldset.field {
   background-size: contain;
 }
 
-/* ===== 버튼 ===== */
+/* 버튼  */
 .actions {
   margin-top: 28px;
 }
@@ -210,7 +209,7 @@ fieldset.field {
   font-size: 14px;
 }
 
-/* ===== 반응형 (모바일 기준 최적화) ===== */
+/* ===== 반응형  ===== */
 @media (max-width: 430px) {
   .card {
     border-radius: 0;
