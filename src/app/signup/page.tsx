@@ -1,10 +1,8 @@
 import React from "react";
-import Signup from "./Signup"; 
+import Signup from "./Signup";
 
 const SignupPage = () => {
-    return(
-        <Signup /> 
-    );
+  return <Signup />;
 };
 
 export default SignupPage;
