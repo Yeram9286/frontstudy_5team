@@ -30,7 +30,7 @@ const Signup = ()=> {
     if (password !== passwordConfirm) {
       return setMessage('비밀번호 확인이 일치하지 않습니다.');
     }
-    // 실제 프로젝트에서는 여기서 API 호출
+    // API 호출
     alert(`회원가입 데이터\n${JSON.stringify({ userId, fullName, gender, birthYear }, null, 2)}`);
     setMessage('회원가입이 완료되었습니다');
   };
