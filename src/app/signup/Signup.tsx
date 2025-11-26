@@ -1,31 +1,38 @@
 "use client";
 
 import React, { useState } from "react";
-import styles from "@/app/signup/Signup.module.css";
+import styles from "./Signup.module.css";
 
-const Signup = () => {
-  const [userId, setUserId] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordCheck, setPasswordCheck] = useState("");
-  const [userPhone, setUserPhone] = useState("");
-  const [userCertificationNumber, setUserCertificationNumber] = useState("");
+const Signup = () => { 
+  const [loginId, setLoginId] = useState(""); 
+  const [password, setPassword] = useState(""); 
+  const [passwordCheck, setPasswordCheck] = useState(""); 
+  const [username, setUsername] = useState(""); 
+  const [gender, setGender] = useState<"male" | "female" | "private" | "">(""); 
+  const [birthDate, setBirthDate] = useState(""); 
+  const [phoneNumber, setPhoneNumber] = useState(""); 
+  const [certificationNumber, setCertificationNumber] = useState(""); 
 
+  const [isCertificationRequested, setIsCertificationRequested] = useState(false);
+  const [verified, setVerified] = useState(false); 
+
+  
   const handleCheckId = () => {
-    if (!userId) {
+    if (!loginId) {
       alert("아이디를 입력해주세요.");
       return;
     }
-    if (userId.length < 4 || userId.length > 12) {
+    if (loginId.length < 4 || loginId.length > 12) {
       alert("아이디는 4~12자로 입력해주세요.");
       return;
     }
-    if (!/^[a-zA-Z0-9]+$/.test(userId)) {
+    if (!/^[a-zA-Z0-9]+$/.test(loginId)) {
       alert("아이디는 영문, 숫자만 사용 가능합니다.");
       return;
     }
 
-    const usedIds = ["soyeoung"];
-    if (usedIds.includes(userId)) {
+    const usedIds = ["soyeoung"]; 
+    if (usedIds.includes(loginId)) {
       alert("이미 사용 중인 아이디입니다.");
     } else {
       alert("사용 가능한 아이디입니다.");
@@ -33,33 +40,49 @@ const Signup = () => {
   };
 
   const handleCheckPhone = () => {
-    if (!userPhone) {
+    if (!phoneNumber) {
       alert("전화번호를 입력해주세요.");
       return;
     }
-    if (!/^[0-9]{10,11}$/.test(userPhone)) {
+    if (!/^[0-9]{10,11}$/.test(phoneNumber)) {
       alert("올바른 전화번호 형식이 아닙니다.");
       return;
     }
+
     alert("인증번호 6자리가 발송되었습니다.");
+
+    setIsCertificationRequested(true);
+    setVerified(false); 
   };
 
   const handleCheckCertificationNumber = () => {
-    if (!userCertificationNumber) {
+    if (!isCertificationRequested) {
+      alert("먼저 인증요청을 진행해주세요.");
+      return;
+    }
+
+    if (!certificationNumber) {
       alert("인증번호를 입력해주세요.");
       return;
     }
-    if (!/^[0-9]{6}$/.test(userCertificationNumber)) {
+    if (!/^[0-9]{6}$/.test(certificationNumber)) {
       alert("올바른 인증번호 형식이 아닙니다.");
       return;
     }
-    alert("인증번호가 확인되었습니다.");
+
+    if (certificationNumber === "111111") {
+      alert("인증번호가 확인되었습니다.");
+      setVerified(true);
+    } else {
+      alert("인증번호가 일치하지 않습니다.");
+      setVerified(false);
+    }
   };
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    if (!userId) {
+    if (!loginId) {
       alert("아이디를 입력해주세요.");
       return;
     }
@@ -79,6 +102,35 @@ const Signup = () => {
       alert("비밀번호는 영문과 숫자를 포함해야 합니다.");
       return;
     }
+    if (!username) {
+      alert("이름을 입력해주세요.");
+      return;
+    }
+    if (!gender) {
+      alert("성별을 선택해주세요.");
+      return;
+    }
+    if (!birthDate) {
+      alert("태어난 년도를 선택해주세요.");
+      return;
+    }
+    if (!verified) {
+      alert("전화번호 인증을 완료해주세요.");
+      return;
+    }
+
+    const payload = {
+      loginId,
+      password,
+      username,
+      gender,
+      birthDate,
+      phoneNumber,
+      verified,
+    };
+
+    console.log("회원가입 payload:", payload);
+    alert("회원가입이 완료되었습니다. (콘솔 로그 확인)");
   };
 
   return (
@@ -92,8 +144,8 @@ const Signup = () => {
             <input
               type="text"
               placeholder="아이디를 입력해주세요."
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
+              value={loginId}
+              onChange={(e) => setLoginId(e.target.value)}
             />
             <button className={styles.checkButton} onClick={handleCheckId}>
               중복확인
@@ -123,33 +175,63 @@ const Signup = () => {
 
         <div className={styles.inputGroup}>
           <label>이름</label>
-          <input type="text" placeholder="이름을 입력해주세요." />
+          <input
+            type="text"
+            placeholder="이름을 입력해주세요."
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
         </div>
 
         <div className={styles.inputGroup}>
           <label>성별</label>
           <div className={styles.radio}>
             <label>
-              <input type="radio" name="gender" value="male" /> 남성
+              <input
+                type="radio"
+                name="gender"
+                value="male"
+                checked={gender === "male"}
+                onChange={() => setGender("male")}
+              />{" "}
+              남성
             </label>
             <label>
-              <input type="radio" name="gender" value="female" /> 여성
+              <input
+                type="radio"
+                name="gender"
+                value="female"
+                checked={gender === "female"}
+                onChange={() => setGender("female")}
+              />{" "}
+              여성
             </label>
             <label>
-              <input type="radio" name="gender" value="private" /> 비공개
+              <input
+                type="radio"
+                name="gender"
+                value="private"
+                checked={gender === "private"}
+                onChange={() => setGender("private")}
+              />{" "}
+              비공개
             </label>
           </div>
         </div>
 
         <div className={styles.inputGroup}>
-          <label>나이</label>
-          <select className={styles.select}>
+          <label>생년</label>
+          <select
+            className={styles.select}
+            value={birthDate}
+            onChange={(e) => setBirthDate(e.target.value)}
+          >
             <option value="" disabled>
               태어난 년도를 선택해주세요.
             </option>
-            <option value="2006">2006년</option>
-            <option value="2005">2005년</option>
-            <option value="2004">2004년</option>
+            <option value="2006-01-01">2006년</option>
+            <option value="2005-01-01">2005년</option>
+            <option value="2004-01-01">2004년</option>
           </select>
         </div>
 
@@ -159,27 +241,35 @@ const Signup = () => {
             <input
               type="text"
               placeholder="전화번호를 입력해주세요."
-              value={userPhone}
-              onChange={(e) => setUserPhone(e.target.value)}
+              value={phoneNumber}
+              onChange={(e) => {
+                setPhoneNumber(e.target.value);
+                setIsCertificationRequested(false);
+                setVerified(false);
+                setCertificationNumber("");
+              }}
             />
             <button className={styles.checkButton} onClick={handleCheckPhone}>
               인증요청
             </button>
           </div>
+          {verified && (
+            <p className={styles.successText}>전화번호 인증이 완료되었습니다.</p>
+          )}
         </div>
-
         <div className={styles.inputGroup}>
           <label>인증번호</label>
           <div className={styles.idField}>
             <input
               type="text"
               placeholder="인증번호를 입력해주세요."
-              value={userCertificationNumber}
-              onChange={(e) => setUserCertificationNumber(e.target.value)}
+              value={certificationNumber}
+              onChange={(e) => setCertificationNumber(e.target.value)}
             />
             <button
               className={styles.checkButton}
               onClick={handleCheckCertificationNumber}
+              disabled={!isCertificationRequested}
             >
               인증확인
             </button>
@@ -195,3 +285,4 @@ const Signup = () => {
 };
 
 export default Signup;
+
