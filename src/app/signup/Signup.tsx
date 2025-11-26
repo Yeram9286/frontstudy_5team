@@ -4,69 +4,78 @@ import React, { useEffect, useState } from "react";
 import styles from "@/app/signup/Signup.module.css";
 
 type FormData = {
-  username: string;
-  password: string;
-  confirmPassword: string;
-  name: string;
-  gender: string;
-  birthYear: string;
-  phone: string;
-  verificationCode: string;
+  loginId: string;          
+  password: string;         
+  confirmPassword: string;  
+  username: string;         
+  gender: string;           
+  birthDate: string;        
+  phoneNumber: string;      
+  verificationCode: string; 
+  verified: boolean;        
 };
 
 type FormErrors = Partial<Record<keyof FormData, string>>;
 
 const Signup = () => {
   const [formData, setFormData] = useState<FormData>({
-    username: "",
+    loginId: "",
     password: "",
     confirmPassword: "",
-    name: "",
+    username: "",
     gender: "",
-    birthYear: "",
-    phone: "",
+    birthDate: "",
+    phoneNumber: "",
     verificationCode: "",
+    verified: false,
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isIdChecked, setIsIdChecked] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
   const [sentCode, setSentCode] = useState<string>("");
-  const [timer, setTimer] = useState<number>(0);
   const [toast, setToast] = useState<string>("");
 
   /* 실시간 유효성 검사 */
   useEffect(() => {
     const newErrors: FormErrors = {};
 
-    if (formData.username && !/^[a-zA-Z0-9]{5,12}$/.test(formData.username))
-      newErrors.username = "영문과 숫자 조합 5~12자로 입력해주세요.";
+    // 아이디(loginId) 검사
+    if (formData.loginId && !/^[a-zA-Z0-9]{5,12}$/.test(formData.loginId)) {
+      newErrors.loginId = "영문과 숫자 조합 5~12자로 입력해주세요.";
+    }
 
-    if (formData.password && !/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/.test(formData.password))
+    // 비밀번호 검사
+    if (
+      formData.password &&
+      !/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/.test(formData.password)
+    ) {
       newErrors.password = "영문, 숫자, 특수문자를 포함해 8자 이상 입력해주세요.";
+    }
 
-    if (formData.confirmPassword && formData.password !== formData.confirmPassword)
+    // 비밀번호 확인 일치 여부
+    if (
+      formData.confirmPassword &&
+      formData.password !== formData.confirmPassword
+    ) {
       newErrors.confirmPassword = "비밀번호가 일치하지 않습니다.";
+    }
 
-    if (formData.phone && !/^010\d{8}$/.test(formData.phone))
-      newErrors.phone = "올바른 전화번호 형식을 입력해주세요. (01012345678)";
+    // 전화번호 검사
+    if (formData.phoneNumber && !/^010\d{8}$/.test(formData.phoneNumber)) {
+      newErrors.phoneNumber =
+        "올바른 전화번호 형식을 입력해주세요. (01012345678)";
+    }
 
     setErrors(newErrors);
   }, [formData]);
 
-  /* 타이머 관리 (인증번호 3분 유효) */
-  useEffect(() => {
-    if (timer > 0) {
-      const countdown = setInterval(() => setTimer(prev => prev - 1), 1000);
-      return () => clearInterval(countdown);
-    }
-  }, [timer]);
-
- /* 입력값 변경 처리 */
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  /* 입력값 변경 처리 */
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    setErrors(prev => ({ ...prev, [name]: "" }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   /* 토스트 메시지 표시 */
@@ -77,14 +86,14 @@ const Signup = () => {
 
   /* 아이디 중복확인 */
   const handleIdCheck = () => {
-    if (errors.username || !formData.username) {
+    if (errors.loginId || !formData.loginId) {
       showToast("아이디 형식을 먼저 확인해주세요.");
       return;
     }
 
     // Mock API (admin만 중복 처리)
     setTimeout(() => {
-      if (formData.username === "admin") {
+      if (formData.loginId === "admin") {
         setIsIdChecked(false);
         showToast("이미 사용 중인 아이디입니다");
       } else {
@@ -96,15 +105,14 @@ const Signup = () => {
 
   /* 인증번호 전송 */
   const handleSendCode = () => {
-    if (errors.phone || !formData.phone) {
+    if (errors.phoneNumber || !formData.phoneNumber) {
       showToast("전화번호를 올바르게 입력해주세요.");
       return;
     }
 
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     setSentCode(code);
-    setTimer(180); // 3분 타이머
-    setIsVerified(false);
+    setFormData((prev) => ({ ...prev, verified: false }));
     showToast("인증번호가 전송되었습니다 (mock)");
   };
 
@@ -116,9 +124,8 @@ const Signup = () => {
     }
 
     if (formData.verificationCode === sentCode) {
-      setIsVerified(true);
+      setFormData((prev) => ({ ...prev, verified: true }));
       showToast("인증이 완료되었습니다");
-      setTimer(0);
     } else {
       showToast("인증번호가 올바르지 않습니다");
     }
@@ -129,11 +136,23 @@ const Signup = () => {
     e.preventDefault();
 
     if (!isIdChecked) return showToast("아이디 중복확인을 해주세요.");
-    if (!isVerified) return showToast("전화번호 인증을 완료해주세요.");
-    if (Object.keys(errors).length > 0) return showToast("입력값을 다시 확인해주세요.");
+    if (!formData.verified) return showToast("전화번호 인증을 완료해주세요.");
+    if (Object.keys(errors).length > 0)
+      return showToast("입력값을 다시 확인해주세요.");
 
+    // 실제 서버로 보낼 payload (ERD에 맞는 key들만 사용)
+    const payload = {
+      loginId: formData.loginId,
+      password: formData.password,
+      username: formData.username,
+      gender: formData.gender,
+      birthDate: formData.birthDate,
+      phoneNumber: formData.phoneNumber,
+      verified: formData.verified,
+    };
+
+    console.log("서버로 보낼 회원가입 데이터:", payload);
     showToast("회원가입 성공 🎉");
-    // 실제 서버 전송 로직 위치
   };
 
   return (
@@ -143,15 +162,15 @@ const Signup = () => {
       {toast && <div className={styles.toast}>{toast}</div>}
 
       <form className={styles.form} onSubmit={handleSubmit}>
-        {/* 아이디 */}
+        {/* 아이디 (loginId) */}
         <div className={styles.formGroup}>
           <label className={styles.label}>아이디</label>
           <div className={styles.inputRow}>
             <input
               type="text"
-              name="username"
+              name="loginId"
               placeholder="아이디를 입력해주세요."
-              value={formData.username}
+              value={formData.loginId}
               onChange={handleChange}
               className={styles.input}
               autoComplete="off"
@@ -164,7 +183,9 @@ const Signup = () => {
               중복확인
             </button>
           </div>
-          {errors.username && <p className={styles.error}>{errors.username}</p>}
+          {errors.loginId && (
+            <p className={styles.error}>{errors.loginId}</p>
+          )}
         </div>
 
         {/* 비밀번호 */}
@@ -179,8 +200,10 @@ const Signup = () => {
             className={styles.input}
             autoComplete="off"
           />
-          {errors.password && <p className={styles.error}>{errors.password}</p>}
         </div>
+        {errors.password && (
+          <p className={styles.error}>{errors.password}</p>
+        )}
 
         {/* 비밀번호 확인 */}
         <div className={styles.formGroup}>
@@ -194,17 +217,19 @@ const Signup = () => {
             className={styles.input}
             autoComplete="off"
           />
-          {errors.confirmPassword && <p className={styles.error}>{errors.confirmPassword}</p>}
+          {errors.confirmPassword && (
+            <p className={styles.error}>{errors.confirmPassword}</p>
+          )}
         </div>
 
-        {/* 이름 */}
+        {/* 이름 (username) */}
         <div className={styles.formGroup}>
           <label className={styles.label}>이름</label>
           <input
             type="text"
-            name="name"
+            name="username"
             placeholder="이름을 입력해주세요."
-            value={formData.name}
+            value={formData.username}
             onChange={handleChange}
             className={styles.input}
           />
@@ -214,18 +239,43 @@ const Signup = () => {
         <div className={styles.formGroup}>
           <label className={styles.label}>성별</label>
           <div className={styles.radioGroup}>
-            <label><input type="radio" name="gender" value="male" onChange={handleChange}/> 남성</label>
-            <label><input type="radio" name="gender" value="female" onChange={handleChange}/> 여성</label>
-            <label><input type="radio" name="gender" value="private" onChange={handleChange}/> 비공개</label>
+            <label>
+              <input
+                type="radio"
+                name="gender"
+                value="male"
+                onChange={handleChange}
+              />{" "}
+              남성
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="gender"
+                value="female"
+                onChange={handleChange}
+              />{" "}
+              여성
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="gender"
+                value="private"
+                onChange={handleChange}
+              />{" "}
+              비공개
+            </label>
           </div>
         </div>
 
-        {/* 나이 */}
+        {/* 생일 (birthDate) */}
         <div className={styles.formGroup}>
-          <label className={styles.label}>나이</label>
+          <label className={styles.label}>생일</label>
+          {/* 지금은 연도만 선택하지만 name/value는 birthDate로 맞춰 둠 */}
           <select
-            name="birthYear"
-            value={formData.birthYear}
+            name="birthDate"
+            value={formData.birthDate}
             onChange={handleChange}
             className={styles.select}
           >
@@ -236,38 +286,39 @@ const Signup = () => {
           </select>
         </div>
 
-        {/* 전화번호 */}
+        {/* 전화번호 (phoneNumber) */}
         <div className={styles.formGroup}>
           <label className={styles.label}>전화번호</label>
           <div className={styles.inputRow}>
             <input
               type="text"
-              name="phone"
+              name="phoneNumber"
               placeholder="01012345678"
-              value={formData.phone}
+              value={formData.phoneNumber}
               onChange={handleChange}
-              className={`${styles.input} ${isVerified ? styles.disabledInput : ""}`}
-              disabled={isVerified}
+              className={`${styles.input} ${
+                formData.verified ? styles.disabledInput : ""
+              }`}
+              disabled={formData.verified}
             />
             <button
               type="button"
-              className={`${styles.verifyBtn} ${isVerified ? styles.verified : ""}`}
+              className={`${styles.verifyBtn} ${
+                formData.verified ? styles.verified : ""
+              }`}
               onClick={handleSendCode}
-              disabled={isVerified}
+              disabled={formData.verified}
             >
-              {isVerified ? "인증완료" : "인증번호 전송"}
+              {formData.verified ? "인증완료" : "인증번호 전송"}
             </button>
           </div>
-          {errors.phone && <p className={styles.error}>{errors.phone}</p>}
-          {timer > 0 && !isVerified && (
-            <p className={styles.timer}>
-              남은 시간: {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, "0")}
-            </p>
+          {errors.phoneNumber && (
+            <p className={styles.error}>{errors.phoneNumber}</p>
           )}
         </div>
 
-        {/* 인증번호 */}
-        {!isVerified && (
+        {/* 인증번호 입력 */}
+        {!formData.verified && (
           <div className={styles.formGroup}>
             <label className={styles.label}>인증번호</label>
             <div className={styles.inputRow}>
@@ -290,7 +341,9 @@ const Signup = () => {
           </div>
         )}
 
-        <button type="submit" className={styles.submitBtn}>회원가입</button>
+        <button type="submit" className={styles.submitBtn}>
+          회원가입
+        </button>
       </form>
     </div>
   );
