@@ -2,17 +2,24 @@
 
 import React, { useEffect, useState } from "react";
 import styles from "@/app/signup/Signup.module.css";
+import axios from "axios";
+
+const ID_CHECK_ENDPOINT    = "";
+const SEND_CODE_ENDPOINT   = "";
+const VERIFY_CODE_ENDPOINT = "";
+const SIGNUP_ENDPOINT      = "";
+
 
 type FormData = {
-  loginId: string;          
-  password: string;         
-  confirmPassword: string;  
-  username: string;         
-  gender: string;           
-  birthDate: string;        
-  phoneNumber: string;      
-  verificationCode: string; 
-  verified: boolean;        
+  loginId: string;          // 아이디
+  password: string;         // 비밀번호
+  confirmPassword: string;  // 비밀번호 확인 (프론트 전용)
+  username: string;         // 이름
+  gender: string;           // 성별
+  birthDate: string;        // 생일
+  phoneNumber: string;      // 전화번호
+  verificationCode: string; // 인증번호 입력값 (프론트 전용)
+  verified: boolean;        // 인증상태
 };
 
 type FormErrors = Partial<Record<keyof FormData, string>>;
@@ -32,7 +39,6 @@ const Signup = () => {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isIdChecked, setIsIdChecked] = useState(false);
-  const [sentCode, setSentCode] = useState<string>("");
   const [toast, setToast] = useState<string>("");
 
   /* 실시간 유효성 검사 */
@@ -85,75 +91,141 @@ const Signup = () => {
   };
 
   /* 아이디 중복확인 */
-  const handleIdCheck = () => {
-    if (errors.loginId || !formData.loginId) {
-      showToast("아이디 형식을 먼저 확인해주세요.");
-      return;
-    }
+  const handleIdCheck = async () => {
+  if (errors.loginId || !formData.loginId) {
+    showToast("아이디 형식을 먼저 확인해주세요.");
+    return;
+  }
 
-    // Mock API (admin만 중복 처리)
-    setTimeout(() => {
-      if (formData.loginId === "admin") {
-        setIsIdChecked(false);
-        showToast("이미 사용 중인 아이디입니다");
-      } else {
-        setIsIdChecked(true);
-        showToast("사용 가능한 아이디입니다");
+  try {
+    const response = await axios.post(ID_CHECK_ENDPOINT,null, 
+      {
+        params: {
+          loginId: formData.loginId,
+        },
       }
-    }, 500);
-  };
+    );
+
+    console.log("아이디 중복확인 응답:", response.data);
+
+    if (response.data.available) {
+      setIsIdChecked(true);
+      showToast("사용 가능한 아이디입니다");
+    } else {
+      setIsIdChecked(false);
+      showToast("이미 사용 중인 아이디입니다");
+    }
+  } catch (error) {
+  if (axios.isAxiosError(error)) {
+    console.error("아이디 중복확인 실패:", error.response?.data ?? error.message);
+  } else {
+    console.error("아이디 중복확인 실패(알 수 없는 에러):", error);
+  }
+
+  showToast("아이디 확인 중 오류가 발생했습니다.");
+}
+
+};
 
   /* 인증번호 전송 */
-  const handleSendCode = () => {
-    if (errors.phoneNumber || !formData.phoneNumber) {
-      showToast("전화번호를 올바르게 입력해주세요.");
-      return;
+  const handleSendCode = async () => {
+  if (errors.phoneNumber || !formData.phoneNumber) {
+    showToast("전화번호를 올바르게 입력해주세요.");
+    return;
+  }
+
+  try {
+    const response = await axios.post(SEND_CODE_ENDPOINT, {
+      phoneNumber: formData.phoneNumber,
+    });
+
+    console.log("인증번호 전송 응답:", response.data);
+
+    setFormData((prev) => ({ ...prev, verified: false }));
+
+    showToast("인증번호가 전송되었습니다.");
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("인증번호 전송 실패:", error.response?.data ?? error.message);
+    } else {
+      console.error("인증번호 전송 실패(알 수 없는 에러):", error);
     }
 
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    setSentCode(code);
-    setFormData((prev) => ({ ...prev, verified: false }));
-    showToast("인증번호가 전송되었습니다 (mock)");
-  };
+    showToast("인증번호 전송 중 오류가 발생했습니다.");
+  }
+};
+
 
   /* 인증번호 확인 */
-  const handleVerifyCode = () => {
-    if (!sentCode) {
-      showToast("인증번호를 먼저 전송해주세요.");
-      return;
-    }
+  const handleVerifyCode = async () => {
+  if (!formData.verificationCode) {
+    showToast("인증번호를 입력해주세요.");
+    return;
+  }
 
-    if (formData.verificationCode === sentCode) {
+  try {
+    const response = await axios.post(VERIFY_CODE_ENDPOINT, {
+      phoneNumber: formData.phoneNumber,
+      code: formData.verificationCode,
+    });
+
+    console.log("인증번호 확인 응답:", response.data);
+
+    if (response.data.success) {
       setFormData((prev) => ({ ...prev, verified: true }));
       showToast("인증이 완료되었습니다");
     } else {
       showToast("인증번호가 올바르지 않습니다");
     }
-  };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("인증번호 확인 실패:", error.response?.data ?? error.message);
+    } else {
+      console.error("인증번호 확인 실패(알 수 없는 에러):", error);
+    }
+
+    showToast("인증번호 확인 중 오류가 발생했습니다.");
+  }
+};
+
 
   /* 폼 제출 */
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    if (!isIdChecked) return showToast("아이디 중복확인을 해주세요.");
-    if (!formData.verified) return showToast("전화번호 인증을 완료해주세요.");
-    if (Object.keys(errors).length > 0)
-      return showToast("입력값을 다시 확인해주세요.");
+  if (!isIdChecked) return showToast("아이디 중복확인을 해주세요.");
+  if (!formData.verified) return showToast("전화번호 인증을 완료해주세요.");
+  if (Object.keys(errors).length > 0)
+    return showToast("입력값을 다시 확인해주세요.");
 
-    // 실제 서버로 보낼 payload (ERD에 맞는 key들만 사용)
-    const payload = {
-      loginId: formData.loginId,
-      password: formData.password,
-      username: formData.username,
-      gender: formData.gender,
-      birthDate: formData.birthDate,
-      phoneNumber: formData.phoneNumber,
-      verified: formData.verified,
-    };
-
-    console.log("서버로 보낼 회원가입 데이터:", payload);
-    showToast("회원가입 성공 🎉");
+  const payload = {
+    loginId: formData.loginId,
+    password: formData.password,
+    username: formData.username,
+    gender: formData.gender,
+    birthDate: formData.birthDate,
+    phoneNumber: formData.phoneNumber,
+    verified: formData.verified,
   };
+
+  try {
+    const response = await axios.post(SIGNUP_ENDPOINT, payload);
+
+    console.log("회원가입 응답:", response.data);
+
+    showToast("회원가입 성공 🎉");
+
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("회원가입 실패:", error.response?.data ?? error.message);
+    } else {
+      console.error("회원가입 실패(알 수 없는 에러):", error);
+    }
+
+    showToast("회원가입 중 오류가 발생했습니다.");
+  }
+};
+
 
   return (
     <div className={styles.container}>
@@ -272,7 +344,6 @@ const Signup = () => {
         {/* 생일 (birthDate) */}
         <div className={styles.formGroup}>
           <label className={styles.label}>생일</label>
-          {/* 지금은 연도만 선택하지만 name/value는 birthDate로 맞춰 둠 */}
           <select
             name="birthDate"
             value={formData.birthDate}
