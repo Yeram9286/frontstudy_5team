@@ -2,6 +2,12 @@
 
 import React, { useState } from "react";
 import styles from "./Signup.module.css";
+import axios from "axios";
+
+const ID_CHECK_ENDPOINT = " ";          
+const SIGNUP_ENDPOINT = " ";           
+const SEND_CERT_ENDPOINT = " ";         
+const VERIFY_CERT_ENDPOINT = " ";       
 
 const Signup = () => { 
   const [loginId, setLoginId] = useState(""); 
@@ -16,8 +22,7 @@ const Signup = () => {
   const [isCertificationRequested, setIsCertificationRequested] = useState(false);
   const [verified, setVerified] = useState(false); 
 
-  
-  const handleCheckId = () => {
+  const handleCheckId = async () => {
     if (!loginId) {
       alert("아이디를 입력해주세요.");
       return;
@@ -31,15 +36,22 @@ const Signup = () => {
       return;
     }
 
-    const usedIds = ["soyeoung"]; 
-    if (usedIds.includes(loginId)) {
-      alert("이미 사용 중인 아이디입니다.");
-    } else {
-      alert("사용 가능한 아이디입니다.");
+    try {
+      const response = await axios.post(ID_CHECK_ENDPOINT, {
+        params: {
+          loginId: loginId,
+        },
+      });
+      console.log("아이디 중복확인 성공:", response.data);
+
+      alert("아이디 중복확인 API 호출이 완료");
+    } catch (error: any) {
+      console.error("아이디 중복확인 실패:", error.response?.data || error);
+      alert("아이디 중복 확인 중 오류가 발생했습니다.");
     }
   };
 
-  const handleCheckPhone = () => {
+  const handleCheckPhone = async () => {
     if (!phoneNumber) {
       alert("전화번호를 입력해주세요.");
       return;
@@ -49,13 +61,24 @@ const Signup = () => {
       return;
     }
 
-    alert("인증번호 6자리가 발송되었습니다.");
+    const payload = {
+      phoneNumber: phoneNumber,
+    };
 
-    setIsCertificationRequested(true);
-    setVerified(false); 
+    try {
+      const response = await axios.post(SEND_CERT_ENDPOINT, payload);
+      console.log("인증번호 요청 성공:", response.data);
+
+      alert("인증번호 6자리가 발송되었습니다.");
+      setIsCertificationRequested(true);
+      setVerified(false);
+    } catch (error: any) {
+      console.error("인증번호 요청 실패:", error.response?.data || error);
+      alert("인증번호 요청 중 오류가 발생했습니다.");
+    }
   };
 
-  const handleCheckCertificationNumber = () => {
+  const handleCheckCertificationNumber = async () => {
     if (!isCertificationRequested) {
       alert("먼저 인증요청을 진행해주세요.");
       return;
@@ -70,16 +93,26 @@ const Signup = () => {
       return;
     }
 
-    if (certificationNumber === "111111") {
+    const payload = {
+      phoneNumber: phoneNumber,
+      certificationNumber: certificationNumber,
+    };
+
+    try {
+      const response = await axios.post(VERIFY_CERT_ENDPOINT, payload);
+      console.log("인증번호 검증 성공:", response.data);
+
       alert("인증번호가 확인되었습니다.");
       setVerified(true);
-    } else {
-      alert("인증번호가 일치하지 않습니다.");
+    } catch (error: any) {
+      console.error("인증번호 검증 실패:", error.response?.data || error);
+      alert("인증번호가 일치하지 않거나 오류가 발생했습니다.");
       setVerified(false);
     }
   };
 
-  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     if (!loginId) {
@@ -129,8 +162,14 @@ const Signup = () => {
       verified,
     };
 
-    console.log("회원가입 payload:", payload);
-    alert("회원가입이 완료되었습니다. (콘솔 로그 확인)");
+    try {
+      const response = await axios.post(SIGNUP_ENDPOINT, payload);
+      console.log("회원가입 성공:", response.data);
+      alert("회원가입이 완료되었습니다!");
+    } catch (error: any) {
+      console.error("회원가입 실패:", error.response?.data || error);
+      alert("회원가입 중 오류가 발생했습니다.");
+    }
   };
 
   return (
@@ -190,7 +229,7 @@ const Signup = () => {
               <input
                 type="radio"
                 name="gender"
-                value="male"
+                value={"male"}
                 checked={gender === "male"}
                 onChange={() => setGender("male")}
               />{" "}
@@ -200,7 +239,7 @@ const Signup = () => {
               <input
                 type="radio"
                 name="gender"
-                value="female"
+                value={"female"}
                 checked={gender === "female"}
                 onChange={() => setGender("female")}
               />{" "}
@@ -210,7 +249,7 @@ const Signup = () => {
               <input
                 type="radio"
                 name="gender"
-                value="private"
+                value={"private"}
                 checked={gender === "private"}
                 onChange={() => setGender("private")}
               />{" "}
@@ -257,6 +296,7 @@ const Signup = () => {
             <p className={styles.successText}>전화번호 인증이 완료되었습니다.</p>
           )}
         </div>
+
         <div className={styles.inputGroup}>
           <label>인증번호</label>
           <div className={styles.idField}>
@@ -285,4 +325,3 @@ const Signup = () => {
 };
 
 export default Signup;
-
