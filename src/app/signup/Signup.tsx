@@ -4,10 +4,10 @@ import React, { useEffect, useState } from "react";
 import styles from "@/app/signup/Signup.module.css";
 import axios from "axios";
 
-const ID_CHECK_ENDPOINT    = "";
-const SEND_CODE_ENDPOINT   = "";
-const VERIFY_CODE_ENDPOINT = "";
-const SIGNUP_ENDPOINT      = "";
+const ID_CHECK_ENDPOINT    = "https://www.gamzasturdy.shop/api/auth/check_login_id";
+const SEND_CODE_ENDPOINT   = "https://www.gamzasturdy.shop/api/sms/send";
+const VERIFY_CODE_ENDPOINT = "https://www.gamzasturdy.shop/api/sms/verify";
+const SIGNUP_ENDPOINT      = "https://www.gamzasturdy.shop/auth/signup";
 
 
 type FormData = {
@@ -98,7 +98,7 @@ const Signup = () => {
   }
 
   try {
-    const response = await axios.post(ID_CHECK_ENDPOINT,null, 
+    const response = await axios.post("https://www.gamzasturdy.shop/api/auth/check_login_id",null, 
       {
         params: {
           loginId: formData.loginId,
@@ -135,9 +135,17 @@ const Signup = () => {
   }
 
   try {
-    const response = await axios.post(SEND_CODE_ENDPOINT, {
-      phoneNumber: formData.phoneNumber,
-    });
+    const response =await axios.post(
+  "https://www.gamzasturdy.shop/api/sms/send",
+  {
+    phoneNumber: formData.phoneNumber,
+    code: formData.verificationCode
+  },
+  {
+    headers: { "Content-Type": "application/json" }
+  }
+);
+
 
     console.log("인증번호 전송 응답:", response.data);
 
@@ -163,16 +171,24 @@ const Signup = () => {
     return;
   }
 
+  const payload = {
+    phoneNumber: formData.phoneNumber,
+    code: formData.verificationCode,
+  };
+
+    console.log("인증번호 확인 페이로드:", payload);
+
   try {
-    const response = await axios.post(VERIFY_CODE_ENDPOINT, {
-      phoneNumber: formData.phoneNumber,
-      code: formData.verificationCode,
+    const response = await axios.post("https://www.gamzasturdy.shop/api/sms/verify",payload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
     console.log("인증번호 확인 응답:", response.data);
 
     if (response.data.success) {
-      setFormData((prev) => ({ ...prev, verified: true }));
+      setFormData((prev) => ({ ...prev, verified: true })); 
       showToast("인증이 완료되었습니다");
     } else {
       showToast("인증번호가 올바르지 않습니다");
@@ -203,13 +219,17 @@ const Signup = () => {
     password: formData.password,
     username: formData.username,
     gender: formData.gender,
-    birthDate: formData.birthDate,
+    birthDate: "2006-06-02",
     phoneNumber: formData.phoneNumber,
     verified: formData.verified,
   };
 
   try {
-    const response = await axios.post(SIGNUP_ENDPOINT, payload);
+    const response = await axios.post("https://www.gamzasturdy.shop/auth/signup", payload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
     console.log("회원가입 응답:", response.data);
 
@@ -315,7 +335,7 @@ const Signup = () => {
               <input
                 type="radio"
                 name="gender"
-                value="male"
+                value="MALE"
                 onChange={handleChange}
               />{" "}
               남성
@@ -324,7 +344,7 @@ const Signup = () => {
               <input
                 type="radio"
                 name="gender"
-                value="female"
+                value="FEMALE"
                 onChange={handleChange}
               />{" "}
               여성
@@ -333,7 +353,7 @@ const Signup = () => {
               <input
                 type="radio"
                 name="gender"
-                value="private"
+                value="NONE"
                 onChange={handleChange}
               />{" "}
               비공개
