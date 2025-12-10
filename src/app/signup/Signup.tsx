@@ -4,17 +4,17 @@ import React, { useState } from "react";
 import styles from "./Signup.module.css";
 import axios from "axios";
 
-const ID_CHECK_ENDPOINT = " ";          
-const SIGNUP_ENDPOINT = " ";           
-const SEND_CERT_ENDPOINT = " ";         
-const VERIFY_CERT_ENDPOINT = " ";       
+const ID_CHECK_ENDPOINT = "https://www.gamzasturdy.shop/api/auth/check_login_id";          
+const SIGNUP_ENDPOINT = "https://www.gamzasturdy.shop/auth/signup";           
+const SEND_CERT_ENDPOINT = "https://www.gamzasturdy.shop/api/sms/send";         
+const VERIFY_CERT_ENDPOINT = "https://www.gamzasturdy.shop/api/sms/verify";       
 
 const Signup = () => { 
   const [loginId, setLoginId] = useState(""); 
   const [password, setPassword] = useState(""); 
   const [passwordCheck, setPasswordCheck] = useState(""); 
   const [username, setUsername] = useState(""); 
-  const [gender, setGender] = useState<"male" | "female" | "private" | "">(""); 
+  const [gender, setGender] = useState<"MALE" | "FEMALE" | "NONE" | "">(""); 
   const [birthDate, setBirthDate] = useState(""); 
   const [phoneNumber, setPhoneNumber] = useState(""); 
   const [certificationNumber, setCertificationNumber] = useState(""); 
@@ -157,7 +157,7 @@ const Signup = () => {
       password,
       username,
       gender,
-      birthDate,
+      birthDate: "2006-03-14",
       phoneNumber,
       verified,
     };
@@ -229,9 +229,9 @@ const Signup = () => {
               <input
                 type="radio"
                 name="gender"
-                value={"male"}
-                checked={gender === "male"}
-                onChange={() => setGender("male")}
+                value={"MALE"}
+                checked={gender === "MALE"}
+                onChange={() => setGender("MALE")}
               />{" "}
               남성
             </label>
@@ -239,9 +239,9 @@ const Signup = () => {
               <input
                 type="radio"
                 name="gender"
-                value={"female"}
-                checked={gender === "female"}
-                onChange={() => setGender("female")}
+                value={"FEMALE"}
+                checked={gender === "FEMALE"}
+                onChange={() => setGender("FEMALE")}
               />{" "}
               여성
             </label>
@@ -249,9 +249,9 @@ const Signup = () => {
               <input
                 type="radio"
                 name="gender"
-                value={"private"}
-                checked={gender === "private"}
-                onChange={() => setGender("private")}
+                value={"NONE"}
+                checked={gender === "NONE"}
+                onChange={() => setGender("NONE")}
               />{" "}
               비공개
             </label>
