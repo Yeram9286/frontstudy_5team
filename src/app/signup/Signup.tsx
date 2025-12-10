@@ -9,8 +9,6 @@ const SIGNUP_ENDPOINT = "https://www.gamzasturdy.shop/auth/signup";
 const SEND_CODE_ENDPOINT = "https://www.gamzasturdy.shop/api/sms/send";       // 인증번호 발송
 const VERIFY_CODE_ENDPOINT = "https://www.gamzasturdy.shop/api/sms/verify";   // 인증번호 확인
 
-
-
 const Signup = () => {
 
   const [loginId, setLoginId] = useState('');
@@ -18,7 +16,7 @@ const Signup = () => {
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [username, setUsername] = useState('');
   const [gender, setGender] = useState<'MALE' | 'FEMALE' | 'SECRET' | ''>('');
-  const [birthDate, setBirthDate] = useState ('NONE');
+  const [birthDate, setBirthDate] = useState('NONE');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [verified, setVerified] = useState(false);
   const [message, setMessage] = useState('');
@@ -92,7 +90,7 @@ const Signup = () => {
       username,
       password,
       gender,
-      birthDate:"2006-11-26",
+      birthDate: "2006-11-26",
       phoneNumber,
       verified,
     };
@@ -141,7 +139,7 @@ const Signup = () => {
 
           {/* 비밀번호 */}
           <div className={styles.field}>
-            <label className={styles.label} htmlFor="password">비밀번호</label>
+            <label htmlFor="password">비밀번호</label>
             <input
               id="password"
               type="password"
@@ -155,7 +153,7 @@ const Signup = () => {
 
           {/* 비밀번호 확인 */}
           <div className={styles.field}>
-            <label className={styles.label} htmlFor="passwordConfirm">비밀번호 확인</label>
+            <label htmlFor="passwordConfirm">비밀번호 확인</label>
             <input
               id="passwordConfirm"
               type="password"
@@ -206,7 +204,7 @@ const Signup = () => {
             </div>
           </div>
 
-          {/* 인증번호 입력 */}
+          {/* 인증번호 */}
           {codeSent && (
             <div className={styles.field}>
               <label className={styles.label} htmlFor="authCode">인증번호</label>
@@ -238,6 +236,7 @@ const Signup = () => {
           <fieldset className={styles.field}>
             <legend className={styles.label}>성별</legend>
             <div className={styles.radios}>
+
               <label className={styles.radio}>
                 <input
                   type="radio"
@@ -270,6 +269,7 @@ const Signup = () => {
                 />
                 비공개
               </label>
+
             </div>
           </fieldset>
 

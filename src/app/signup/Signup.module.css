@@ -124,14 +124,14 @@ fieldset.field {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 15px;
+  font-size: 16px;
   color: #1e1e1e;
 }
 
 .radio input[type="radio"] {
   width: 18px;
   height: 18px;
-  accent-color: #7a68ff; 
+  accent-color: #7a68ff ; 
 }
 /* 출생년도 */
 .select {
@@ -139,14 +139,14 @@ fieldset.field {
 }
 
 .select select {
-  appearance: none;
-  width: 100%;
-  height: 48px;
-  border: 1px solid #e5e7eb;
+width: 100%;
+  height: 50px;
+  border: 1px solid #e0e2e7;
   border-radius: 12px;
-  background: #f5f7fb;
+  background: #f2f3f7; 
   font-size: 15px;
-  padding: 0 42px 0 14px;
+  padding: 0 46px 0 14px;
+  color: #111;
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
 }
@@ -226,3 +226,67 @@ fieldset.field {
     font-size: 15px;
   }
 }
+
+/* ===== 전화번호 인증 ===== */
+
+/* 전화번호 입력창 + 버튼 행 */
+.phoneRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+/* 인증번호 입력칸 + 확인 버튼 */
+.verifyRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* 인증완료 텍스트 */
+.verified {
+  color: #16a34a; /* 초록색 (성공 느낌) */
+  font-size: 14px;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+/* 인증실패 텍스트 */
+.unverified {
+  color: #dc2626; /* 빨간색 (오류 느낌) */
+  font-size: 14px;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+/* 인증 버튼 공통 스타일 */
+.btnVerify {
+  background: #f0edff;
+  color: #6b5cff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  padding: 0 14px;
+  height: 48px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btnVerify:hover {
+  background: #e5e0ff;
+}
+
+/* 반응형 보정 */
+@media (max-width: 430px) {
+  .phoneRow, .verifyRow {
+    grid-template-columns: 1fr auto;
+    gap: 6px;
+  }
+  .btnVerify {
+    padding: 0 10px;
+    font-size: 14px;
+  }
+}
+
