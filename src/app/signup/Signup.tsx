@@ -98,17 +98,17 @@ const Signup = () => {
   }
 
   try {
-    const response = await axios.post("https://www.gamzasturdy.shop/api/auth/check_login_id",null, 
-      {
-        params: {
-          loginId: formData.loginId,
-        },
-      }
-    );
+    const response = await axios.post(
+        ID_CHECK_ENDPOINT,
+        { loginId: formData.loginId }, 
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
     console.log("아이디 중복확인 응답:", response.data);
 
-    if (response.data.available) {
+    if (response.data.exists === false) {
       setIsIdChecked(true);
       showToast("사용 가능한 아이디입니다");
     } else {
@@ -136,10 +136,9 @@ const Signup = () => {
 
   try {
     const response =await axios.post(
-  "https://www.gamzasturdy.shop/api/sms/send",
+  SEND_CODE_ENDPOINT,
   {
-    phoneNumber: formData.phoneNumber,
-    code: formData.verificationCode
+    phoneNumber: formData.phoneNumber
   },
   {
     headers: { "Content-Type": "application/json" }
@@ -179,7 +178,7 @@ const Signup = () => {
     console.log("인증번호 확인 페이로드:", payload);
 
   try {
-    const response = await axios.post("https://www.gamzasturdy.shop/api/sms/verify",payload, {
+    const response = await axios.post(VERIFY_CODE_ENDPOINT,payload, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -187,21 +186,15 @@ const Signup = () => {
 
     console.log("인증번호 확인 응답:", response.data);
 
-    if (response.data.success) {
-      setFormData((prev) => ({ ...prev, verified: true })); 
-      showToast("인증이 완료되었습니다");
-    } else {
-      showToast("인증번호가 올바르지 않습니다");
+    if (response.status == 200 ) { 
+            setFormData((prev) => ({ ...prev, verified: true })); 
+            showToast("인증이 완료되었습니다 ");
+        } else {
+            showToast("인증번호가 올바르지 않습니다");
+        }
+    } catch (error) {
+        showToast("인증번호 확인 중 오류가 발생했습니다.");
     }
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error("인증번호 확인 실패:", error.response?.data ?? error.message);
-    } else {
-      console.error("인증번호 확인 실패(알 수 없는 에러):", error);
-    }
-
-    showToast("인증번호 확인 중 오류가 발생했습니다.");
-  }
 };
 
 
@@ -219,13 +212,13 @@ const Signup = () => {
     password: formData.password,
     username: formData.username,
     gender: formData.gender,
-    birthDate: "2006-06-02",
+    birthDate: formData.birthDate ? `${formData.birthDate}-06-02` : null,
     phoneNumber: formData.phoneNumber,
     verified: formData.verified,
   };
 
   try {
-    const response = await axios.post("https://www.gamzasturdy.shop/auth/signup", payload, {
+    const response = await axios.post(SIGNUP_ENDPOINT, payload, {
       headers: {
         "Content-Type": "application/json",
       },
