@@ -4,10 +4,12 @@ import React, { useState } from 'react';
 import axios from "axios";
 import styles from "@/app/signup/Signup.module.css";
 
-const ID_CHECK_ENDPOINT = "/api/auth/check_login_id";  
-const SIGNUP_ENDPOINT = "/auth/signup";      
-const SEND_CODE_ENDPOINT = "/api/sms/send";       // 인증번호 발송
-const VERIFY_CODE_ENDPOINT = "/api/sms/verify";   // 인증번호 확인
+const ID_CHECK_ENDPOINT = "https://www.gamzasturdy.shop/api/auth/check_login_id";  
+const SIGNUP_ENDPOINT = "https://www.gamzasturdy.shop/auth/signup";      
+const SEND_CODE_ENDPOINT = "https://www.gamzasturdy.shop/api/sms/send";       // 인증번호 발송
+const VERIFY_CODE_ENDPOINT = "https://www.gamzasturdy.shop/api/sms/verify";   // 인증번호 확인
+
+
 
 const Signup = () => {
 
@@ -15,8 +17,8 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [username, setUsername] = useState('');
-  const [gender, setGender] = useState<'male' | 'female' | 'secret' | ''>('');
-  const [birthDate, setBirthDate] = useState<'' | '2004' | '2005' | '2006'>('');
+  const [gender, setGender] = useState<'MALE' | 'FEMALE' | 'SECRET' | ''>('');
+  const [birthDate, setBirthDate] = useState ('NONE');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [verified, setVerified] = useState(false);
   const [message, setMessage] = useState('');
@@ -240,8 +242,8 @@ const Signup = () => {
                 <input
                   type="radio"
                   name="gender"
-                  value="male"
-                  checked={gender === 'male'}
+                  value="MALE"
+                  checked={gender === 'MALE'}
                   onChange={(e) => setGender(e.target.value as any)}
                 />
                 남성
@@ -251,8 +253,8 @@ const Signup = () => {
                 <input
                   type="radio"
                   name="gender"
-                  value="female"
-                  checked={gender === 'female'}
+                  value="FEMALE"
+                  checked={gender === 'FEMALE'}
                   onChange={(e) => setGender(e.target.value as any)}
                 />
                 여성
@@ -262,8 +264,8 @@ const Signup = () => {
                 <input
                   type="radio"
                   name="gender"
-                  value="secret"
-                  checked={gender === 'secret'}
+                  value="SECRET"
+                  checked={gender === 'SECRET'}
                   onChange={(e) => setGender(e.target.value as any)}
                 />
                 비공개
